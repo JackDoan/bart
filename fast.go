@@ -143,7 +143,16 @@ func (f *Fast[V]) Contains(ip netip.Addr) bool {
 	is4 := ip.Is4()
 	n := f.rootNodeByVersion(is4)
 
-	for _, octet := range ip.AsSlice() {
+	var octets []byte
+	if ip.Is4() {
+		x := ip.As4()
+		octets = x[:]
+	} else if ip.Is6() {
+		x := ip.As16()
+		octets = x[:]
+	}
+
+	for _, octet := range octets {
 		if n.Contains(art.OctetToIdx(octet)) {
 			return true
 		}
